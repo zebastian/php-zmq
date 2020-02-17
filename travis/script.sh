@@ -208,7 +208,7 @@ make_test() {
             REQUIRES_PTHREADS_PHP_7_1=`php -r 'die(PHP_VERSION_ID >= 70100 ? "yes" : "no");'`
             if test "$REQUIRES_PTHREADS_PHP_7_1" = "yes"
             then
-                pecl install https://github.com/krakjoe/pthreads/archive/v3.2.0.tar.gz
+                pecl install --ignore-errors https://github.com/krakjoe/pthreads/archive/v3.2.0.tar.gz
             else
                 pecl install pthreads 
             fi
