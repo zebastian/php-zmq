@@ -37,7 +37,7 @@ class MyWorker extends Thread {
 $context = ZMQContext::acquire();
 
 
-$socket = $context->getSocket(ZMQ::SOCKET_PULL);
+$socket = $context->getSocket(ZMQ::SOCKET_PULL, 'persistent id');
 $socket->bind("inproc://pthreads-test");
 $socket->setSockOpt(ZMQ::SOCKOPT_HWM, 1000);
 
