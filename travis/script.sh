@@ -207,6 +207,8 @@ make_test() {
         then
             # package is broken for php >= 7.1, fix is not in pear, but only on github release
             PHP_VERSION_MAJOR_MINOR=`php -r 'die(PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION));'`
+            echo "PHP Version is: $PHP_VERSION_MAJOR_MINOR"
+            
             if test "$PHP_VERSION_MAJOR_MINOR" = "7.3"
             then
                 pecl install --ignore-errors https://github.com/krakjoe/pthreads/archive/master.tar.gz
