@@ -21,7 +21,8 @@ if test "x$4" != "x"; then
     CZMQ_VERSION=$4
 fi
 
-BUILD_PTHREADS=`php -r 'die(PHP_ZTS == 1 && PHP_VERSION_ID >= 70000 ? "yes" : "no");'`
+# pthreads not available from 7.4 on (2020-02)
+BUILD_PTHREADS=`php -r 'die(PHP_ZTS == 1 && PHP_VERSION_ID >= 70000 && PHP_VERSION_ID < 70400 ? "yes" : "no");'`
 
 LIBSODIUM_PREFIX="${CACHE_DIR}/libsodium-${LIBSODIUM_VERSION}"
 LIBZMQ_PREFIX="${CACHE_DIR}/libzmq-${LIBZMQ_VERSION}-libsodium-${LIBSODIUM_VERSION}"
@@ -205,10 +206,16 @@ make_test() {
         if test "${BUILD_PTHREADS}" = "yes"
         then
             # package is broken for php >= 7.1, fix is not in pear, but only on github release
-            REQUIRES_PTHREADS_PHP_7_1=`php -r 'die(PHP_VERSION_ID >= 70100 ? "yes" : "no");'`
-            if test "$REQUIRES_PTHREADS_PHP_7_1" = "yes"
+            PHP_VERSION_MAJOR_MINOR=`php -r 'die(floor(PHP_VERSION_ID));'`
+            if test "$PHP_VERSION_MAJOR_MINOR" = "7.3"
+            then
+                pecl install --ignore-errors https://github.com/krakjoe/pthreads/archive/master.tar.gz
+            elif test "$PHP_VERSION_MAJOR_MINOR" = "7.2"
             then
                 pecl install --ignore-errors https://github.com/krakjoe/pthreads/archive/v3.2.0.tar.gz
+            elif test "$PHP_VERSION_MAJOR_MINOR" = "7.1"
+            then
+                pecl install --ignore-errors https://github.com/krakjoe/pthreads/archive/v3.1.6.tar.gz
             else
                 pecl install pthreads 
             fi
