@@ -205,20 +205,24 @@ make_test() {
 
         if test "${BUILD_PTHREADS}" = "yes"
         then
-            # package is broken for php >= 7.1, fix is not in pear, but only on github release
-            PHP_VERSION_MAJOR_MINOR=`php -r 'die(PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION));'`
+            
+            PHP_VERSION_MAJOR_MINOR=`php -r 'die(PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION);'`
             echo "PHP Version is: $PHP_VERSION_MAJOR_MINOR"
             
             if test "$PHP_VERSION_MAJOR_MINOR" = "7.3"
             then
+                # pthreads from from github master branch (not "yet" released)
                 pecl install --ignore-errors https://github.com/krakjoe/pthreads/archive/master.tar.gz
             elif test "$PHP_VERSION_MAJOR_MINOR" = "7.2"
             then
+                # pthreads from from github release directly
                 pecl install --ignore-errors https://github.com/krakjoe/pthreads/archive/v3.2.0.tar.gz
             elif test "$PHP_VERSION_MAJOR_MINOR" = "7.1"
             then
+                # pthreads from from github release directly
                 pecl install --ignore-errors https://github.com/krakjoe/pthreads/archive/v3.1.6.tar.gz
             else
+                # pthreads from pear release till 7.0
                 pecl install pthreads 
             fi
             pthreads_flag="extension=pthreads.so"
