@@ -45,6 +45,7 @@ class MyServer extends Thread {
 }
 
 $server = new MyServer();
+$server->start();
 
 $request = array();
 for ($i = 0; $i < $threads; $i++) {
