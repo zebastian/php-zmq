@@ -25,24 +25,28 @@ class MyWorker extends Thread {
 
 	public function run() {
 		$context = ZMQContext::acquire();
-
 		$socket = $context->getSocket(ZMQ::SOCKET_PUSH);
 		$socket->connect ("inproc://pthreads-test");
 		$socket->send($this->sendThisBack);
-		
 		sleep(2);
 	}
 }
 
-$context = ZMQContext::acquire();
+class MyServer extends Thread {
+    public $socket;
 
+    public function run() {
+        $context = ZMQContext::acquire();
+        $this->socket = $context->getSocket(ZMQ::SOCKET_PULL);
+        $this->socket->bind("inproc://pthreads-test");
+        $this->socket->setSockOpt(ZMQ::SOCKOPT_HWM, 1000);
+        sleep(2);
+    }
+}
 
-$socket = $context->getSocket(ZMQ::SOCKET_PULL, 'persistent id');
-$socket->bind("inproc://pthreads-test");
-$socket->setSockOpt(ZMQ::SOCKOPT_HWM, 1000);
+$server = new MyServer();
 
 $request = array();
-
 for ($i = 0; $i < $threads; $i++) {
 	$requests[$i] = new MyWorker("thr_$i");
 	$requests[$i]->start();
@@ -53,9 +57,10 @@ var_dump($context->getSocketCount());
 for ($i = 0; $i < $threads; $i++) {
 	$requests[$i]->join();
 }
+$server->join();
 
 for ($i = 0; $i < $threads; $i++) {
-	$socket->recv();
+	$server->socket->recv();
 }
 
 echo "OK";
