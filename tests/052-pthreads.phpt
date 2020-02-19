@@ -46,12 +46,14 @@ class MyServer extends Thread {
 
 $server = new MyServer();
 $server->start();
+echo 'Server started' . PHP_EOL;
 
 $request = array();
 for ($i = 0; $i < $threads; $i++) {
 	$requests[$i] = new MyWorker("thr_$i");
 	$requests[$i]->start();
 }
+echo 'Workers started' . PHP_EOL;
 
 var_dump($context->getSocketCount());
 
@@ -59,6 +61,7 @@ for ($i = 0; $i < $threads; $i++) {
 	$requests[$i]->join();
 }
 $server->join();
+echo 'All requests pushed' . PHP_EOL;
 
 for ($i = 0; $i < $threads; $i++) {
 	$server->socket->recv();
@@ -67,5 +70,8 @@ for ($i = 0; $i < $threads; $i++) {
 echo "OK";
 
 --EXPECT--
+Server started
+Workers started
 int(11)
+All requests pushed
 OK
