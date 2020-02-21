@@ -48,13 +48,14 @@ $server = new MyServer();
 $server->start();
 echo 'Server started' . PHP_EOL;
 
-$request = array();
+$requests = array();
 for ($i = 0; $i < $threads; $i++) {
 	$requests[$i] = new MyWorker("thr_$i");
 	$requests[$i]->start();
 }
 echo 'Workers started' . PHP_EOL;
 
+$context = ZMQContext::acquire();
 var_dump($context->getSocketCount());
 
 for ($i = 0; $i < $threads; $i++) {
