@@ -17,7 +17,7 @@ Test pthreads integration
 $threads = 10;
 
 class MyWorker extends Thread {
-	public $sendThisBack;
+	private $sendThisBack;
 
 	public function __construct($sendThisBack){
 		$this->sendThisBack = $sendThisBack;
@@ -33,18 +33,26 @@ class MyWorker extends Thread {
 }
 
 class MyServer extends Thread {
-    public $socket;
+    private $threads;
 
+    public function __construct($threads){
+        $this->threads = $threads;
+    }
+	
     public function run() {
         $context = ZMQContext::acquire();
-        $this->socket = $context->getSocket(ZMQ::SOCKET_PULL);
-        $this->socket->bind("inproc://pthreads-test");
-        $this->socket->setSockOpt(ZMQ::SOCKOPT_HWM, 1000);
+        $socket = $context->getSocket(ZMQ::SOCKET_PULL);
+        $socket->bind("inproc://pthreads-test");
+        $socket->setSockOpt(ZMQ::SOCKOPT_HWM, 1000);
         sleep(2);
+
+	for ($i = 0; $i < $this->threads; $i++) {
+		$socket->recv();
+	}
     }
 }
 
-$server = new MyServer();
+$server = new MyServer($threads);
 $server->start();
 echo 'Server started' . PHP_EOL;
 
@@ -63,10 +71,6 @@ for ($i = 0; $i < $threads; $i++) {
 }
 $server->join();
 echo 'All requests pushed' . PHP_EOL;
-
-for ($i = 0; $i < $threads; $i++) {
-	$server->socket->recv();
-}
 
 echo "OK";
 
