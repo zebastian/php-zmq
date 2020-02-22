@@ -17,7 +17,7 @@ $client = new ZMQSocket($context, ZMQ::SOCKET_SUB);
 $client->setSockOpt(ZMQ::SOCKOPT_SUBSCRIBE, "Hel");
 $client->connect(ZEROMQ_TEST_DSN);
 
-var_dump(substr($server->recvmsg(ZMQ::MODE_DONTWAIT), 1));
+var_dump(substr($server->recvmsg(), 1));
 $server->sendmsg("Goodbye world!");
 $server->sendmsg("Hello world!");
 
