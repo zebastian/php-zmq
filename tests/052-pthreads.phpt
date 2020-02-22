@@ -69,8 +69,6 @@ for ($i = 0; $i < $threads; $i++) {
 }
 echo 'Workers started' . PHP_EOL;
 
-var_dump($context->getSocketCount());
-
 for ($i = 0; $i < $threads; $i++) {
 	$requests[$i]->join();
 }
