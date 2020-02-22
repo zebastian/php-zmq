@@ -46,8 +46,14 @@ class MyServer extends Thread {
         $socket->setSockOpt(ZMQ::SOCKOPT_HWM, 1000);
         sleep(2);
 
+        echo 'Receiving responses' . PHP_EOL;
+	$responses = array();
 	for ($i = 0; $i < $this->threads; $i++) {
-		$socket->recv();
+            $responses[] = $socket->recv();
+	}
+	sort($responses);
+	foreach($responses as $response){
+	    echo $response . PHP_EOL;
 	}
     }
 }
@@ -63,7 +69,6 @@ for ($i = 0; $i < $threads; $i++) {
 }
 echo 'Workers started' . PHP_EOL;
 
-$context = ZMQContext::acquire();
 var_dump($context->getSocketCount());
 
 for ($i = 0; $i < $threads; $i++) {
@@ -77,6 +82,15 @@ echo "OK";
 --EXPECT--
 Server started
 Workers started
-int(11)
+Receiving responses
+thr_0
+thr_1
+thr_2
+thr_4
+thr_5
+thr_6
+thr_7
+thr_8
+thr_9
 All requests pushed
 OK
