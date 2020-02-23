@@ -22,7 +22,7 @@ if test "x$4" != "x"; then
 fi
 
 # pthreads not available from 7.4 on (2020-02)
-BUILD_PTHREADS=`php -r 'die(PHP_ZTS == 1 && PHP_VERSION_ID >= 70000 && PHP_VERSION_ID < 70400 ? "yes" : "no");'`
+BUILD_PTHREADS=`php -r 'die(PHP_ZTS == 1 && ((PHP_VERSION_ID >= 70000 && PHP_VERSION_ID < 70100) || (PHP_VERSION_ID >= 70200 && PHP_VERSION_ID < 70300)) ? "yes" : "no");'`
 
 LIBSODIUM_PREFIX="${CACHE_DIR}/libsodium-${LIBSODIUM_VERSION}"
 LIBZMQ_PREFIX="${CACHE_DIR}/libzmq-${LIBZMQ_VERSION}-libsodium-${LIBSODIUM_VERSION}"
