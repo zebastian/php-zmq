@@ -11,13 +11,13 @@ Test send / recv with XPUB and XSUB sockets
 include dirname(__FILE__) . '/zeromq_test_helper.inc';
 
 $context = new ZMQContext();
-$server = new ZMQSocket($context, ZMQ::SOCKET_XPUB);
+$server = new ZMQSocket($context, ZMQ::SOCKET_PUB);
 $server->bind(ZEROMQ_TEST_DSN);
-sleep(1);
+
 $client = new ZMQSocket($context, ZMQ::SOCKET_SUB);
 $client->setSockOpt(ZMQ::SOCKOPT_SUBSCRIBE, "Hel");
 $client->connect(ZEROMQ_TEST_DSN);
-sleep(1);
+
 var_dump(substr($server->recvmsg(), 1));
 $server->sendmsg("Goodbye world!");
 $server->sendmsg("Hello world!");
