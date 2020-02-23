@@ -11,7 +11,7 @@ Test send / recv with XPUB and XSUB sockets
 include dirname(__FILE__) . '/zeromq_test_helper.inc';
 
 $context = new ZMQContext();
-$server = new ZMQSocket($context, ZMQ::SOCKET_PUB);
+$server = new ZMQSocket($context, ZMQ::SOCKET_XPUB);
 $server->bind(ZEROMQ_TEST_DSN);
 
 $client = new ZMQSocket($context, ZMQ::SOCKET_SUB);
