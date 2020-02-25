@@ -25,7 +25,7 @@ addons:
             - libtool
 
 before_script:
-  - phpenv config-rm xdebug.ini
+  - phpenv config-rm xdebug.ini || true
 
 script: travis/script.sh $HOME/zeromq-cache $LIBZMQ_VERSION $LIBSODIUM_VERSION $CZMQ_VERSION
 
