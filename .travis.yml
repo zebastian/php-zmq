@@ -2,6 +2,7 @@ dist: trusty
 
 language: php
 php:
+    - nightly
     - 7.4
     - 7.3
     - 7.2
@@ -16,7 +17,7 @@ env:
     - LIBZMQ_VERSION=3.2.5
     - LIBZMQ_VERSION=4.0.7 LIBSODIUM_VERSION=1.0.8
     - LIBZMQ_VERSION=4.1.4 LIBSODIUM_VERSION=1.0.8
-    - LIBZMQ_VERSION=master LIBSODIUM_VERSION=1.0.8
+    - LIBZMQ_VERSION=master LIBSODIUM_VERSION=1.0.18
 addons:
     apt:
         packages:
