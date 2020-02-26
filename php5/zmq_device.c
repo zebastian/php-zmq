@@ -40,7 +40,7 @@
 ZEND_EXTERN_MODULE_GLOBALS(php_zmq)
 
 static
-zend_bool s_invoke_device_cb (php_zmq_device_cb_t *cb, uint64_t current_ts TSRMLS_DC)
+zend_bool s_invoke_device_cb (php_zmq_device_cb_t *cb, uint64_t current_ts)
 {
 	zend_bool retval = 0;
 	zval **params[1];
@@ -54,11 +54,11 @@ zend_bool s_invoke_device_cb (php_zmq_device_cb_t *cb, uint64_t current_ts TSRML
 	cb->fci.no_separation  = 1;
 	cb->fci.retval_ptr_ptr = &retval_ptr;
 
-	if (zend_call_function(&(cb->fci), &(cb->fci_cache) TSRMLS_CC) == FAILURE) {
+	if (zend_call_function(&(cb->fci), &(cb->fci_cache)) == FAILURE) {
 		if (!EG(exception)) {
-			char *buf = php_zmq_printable_func (&(cb->fci), &(cb->fci_cache) TSRMLS_CC);
+			char *buf = php_zmq_printable_func (&(cb->fci), &(cb->fci_cache));
 
-			zend_throw_exception_ex(php_zmq_device_exception_sc_entry_get (), 0 TSRMLS_CC, "Failed to invoke callback %s()", buf);
+			zend_throw_exception_ex(php_zmq_device_exception_sc_entry_get (), 0, "Failed to invoke callback %s()", buf);
 			efree (buf);
 		}
 	}
@@ -93,7 +93,7 @@ int s_capture_message (void *socket, zmq_msg_t *msg, int more)
 }
 
 static
-int s_calculate_timeout (php_zmq_device_object *intern TSRMLS_DC)
+int s_calculate_timeout (php_zmq_device_object *intern)
 {
 	int timeout = -1;
 	uint64_t current = php_zmq_clock (ZMQ_G (clock_ctx));
@@ -130,7 +130,7 @@ int s_calculate_timeout (php_zmq_device_object *intern TSRMLS_DC)
 }
 
 
-zend_bool php_zmq_device (php_zmq_device_object *intern TSRMLS_DC)
+zend_bool php_zmq_device (php_zmq_device_object *intern)
 {
 	int errno_;
 	uint64_t last_message_received;
@@ -158,8 +158,8 @@ zend_bool php_zmq_device (php_zmq_device_object *intern TSRMLS_DC)
 		return 0;
 	}
 
-	front = (php_zmq_socket_object *)zend_object_store_get_object(intern->front TSRMLS_CC);
-	back = (php_zmq_socket_object *)zend_object_store_get_object(intern->back TSRMLS_CC);
+	front = (php_zmq_socket_object *)zend_object_store_get_object(intern->front);
+	back = (php_zmq_socket_object *)zend_object_store_get_object(intern->back);
 
 	items [0].socket = front->socket->z_socket;
 	items [0].fd = 0;
@@ -172,7 +172,7 @@ zend_bool php_zmq_device (php_zmq_device_object *intern TSRMLS_DC)
 
 	capture_sock = NULL;
 	if (intern->capture) {
-		php_zmq_socket_object *capture = (php_zmq_socket_object *)zend_object_store_get_object(intern->capture TSRMLS_CC);
+		php_zmq_socket_object *capture = (php_zmq_socket_object *)zend_object_store_get_object(intern->capture);
 		capture_sock = capture->socket->z_socket;
 	}
 
@@ -185,7 +185,7 @@ zend_bool php_zmq_device (php_zmq_device_object *intern TSRMLS_DC)
 		uint64_t current_ts = 0;
 
 		/* Calculate poll_timeout based on idle / timer cb */
-		int timeout = s_calculate_timeout (intern TSRMLS_CC);
+		int timeout = s_calculate_timeout (intern);
 
 		rc = zmq_poll(&items [0], 2, timeout);
 		if (rc < 0) {
@@ -204,7 +204,7 @@ zend_bool php_zmq_device (php_zmq_device_object *intern TSRMLS_DC)
 		if (intern->timer_cb.initialized && intern->timer_cb.timeout > 0) {
 			/* Is it timer to call the timer ? */
 			if (intern->timer_cb.scheduled_at <= current_ts) {
-				if (!s_invoke_device_cb (&intern->timer_cb, current_ts TSRMLS_CC)) {
+				if (!s_invoke_device_cb (&intern->timer_cb, current_ts)) {
 					zmq_msg_close (&msg);
 					return 1;
 				}
@@ -216,7 +216,7 @@ zend_bool php_zmq_device (php_zmq_device_object *intern TSRMLS_DC)
 			/* Is it timer to call the idle callback ? */
 			if ((current_ts - last_message_received) >= intern->idle_cb.timeout &&
 				intern->idle_cb.scheduled_at <= current_ts) {
-				if (!s_invoke_device_cb (&intern->idle_cb, current_ts TSRMLS_CC)) {
+				if (!s_invoke_device_cb (&intern->idle_cb, current_ts)) {
 					zmq_msg_close (&msg);
 					return 1;
 				}

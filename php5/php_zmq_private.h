@@ -177,13 +177,13 @@ typedef struct _php_zmq_device_object  {
 # define ZMQ_G(v) (php_zmq_globals.v)
 #endif
 
-#define PHP_ZMQ_CONTEXT_OBJECT (php_zmq_context_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+#define PHP_ZMQ_CONTEXT_OBJECT (php_zmq_context_object *)zend_object_store_get_object(getThis());
 
-#define PHP_ZMQ_SOCKET_OBJECT (php_zmq_socket_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+#define PHP_ZMQ_SOCKET_OBJECT (php_zmq_socket_object *)zend_object_store_get_object(getThis());
 
-#define PHP_ZMQ_POLL_OBJECT (php_zmq_poll_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+#define PHP_ZMQ_POLL_OBJECT (php_zmq_poll_object *)zend_object_store_get_object(getThis());
 
-#define PHP_ZMQ_DEVICE_OBJECT (php_zmq_device_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+#define PHP_ZMQ_DEVICE_OBJECT (php_zmq_device_object *)zend_object_store_get_object(getThis());
 
 #define ZMQ_RETURN_THIS RETURN_ZVAL(getThis(), 1, 0);
 
@@ -203,17 +203,17 @@ typedef struct _php_zmq_device_object  {
 
 #define PHP_ZMQ_ERROR_HANDLING_INIT() zend_error_handling error_handling;
 
-#define PHP_ZMQ_ERROR_HANDLING_THROW() zend_replace_error_handling(EH_THROW, php_zmq_socket_exception_sc_entry, &error_handling TSRMLS_CC);
+#define PHP_ZMQ_ERROR_HANDLING_THROW() zend_replace_error_handling(EH_THROW, php_zmq_socket_exception_sc_entry, &error_handling);
 
-#define PHP_ZMQ_ERROR_HANDLING_RESTORE() zend_restore_error_handling(&error_handling TSRMLS_CC);
+#define PHP_ZMQ_ERROR_HANDLING_RESTORE() zend_restore_error_handling(&error_handling);
 
 #else
 
 #define PHP_ZMQ_ERROR_HANDLING_INIT()
 
-#define PHP_ZMQ_ERROR_HANDLING_THROW() php_set_error_handling(EH_THROW, php_zmq_socket_exception_sc_entry TSRMLS_CC);
+#define PHP_ZMQ_ERROR_HANDLING_THROW() php_set_error_handling(EH_THROW, php_zmq_socket_exception_sc_entry);
 
-#define PHP_ZMQ_ERROR_HANDLING_RESTORE() php_set_error_handling(EH_NORMAL, NULL TSRMLS_CC);
+#define PHP_ZMQ_ERROR_HANDLING_RESTORE() php_set_error_handling(EH_NORMAL, NULL);
 
 #endif
 
@@ -252,14 +252,14 @@ typedef struct _php_zmq_device_object  {
 
 PHP_METHOD(zmqsocket, getsockopt);
 PHP_METHOD(zmqsocket, setsockopt);
-zend_bool php_zmq_device(php_zmq_device_object *intern TSRMLS_DC);
+zend_bool php_zmq_device(php_zmq_device_object *intern);
 
 zend_class_entry *php_zmq_socket_exception_sc_entry_get ();
 zend_class_entry *php_zmq_device_exception_sc_entry_get ();
 
-php_stream *php_zmq_create_zmq_fd(zval *obj TSRMLS_DC);
+php_stream *php_zmq_create_zmq_fd(zval *obj);
 
-void php_zmq_register_sockopt_constants (zend_class_entry *ce TSRMLS_DC);
+void php_zmq_register_sockopt_constants (zend_class_entry *ce);
 
 typedef struct _php_zmq_clock_ctx_t php_zmq_clock_ctx_t;
 
@@ -269,7 +269,7 @@ uint64_t php_zmq_clock (php_zmq_clock_ctx_t *clock_ctx);
 
 void php_zmq_clock_destroy (php_zmq_clock_ctx_t **clock_ctx);
 
-char *php_zmq_printable_func (zend_fcall_info *fci, zend_fcall_info_cache *fci_cache TSRMLS_DC);
+char *php_zmq_printable_func (zend_fcall_info *fci, zend_fcall_info_cache *fci_cache);
 
 ZEND_BEGIN_MODULE_GLOBALS(php_zmq)
 	php_zmq_clock_ctx_t *clock_ctx;
